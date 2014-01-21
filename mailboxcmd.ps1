@@ -81,3 +81,18 @@ foreach ($server in $servers)
         Write-Host $server.name -nonewline; Write-Host " OK" -foregroundcolor "green"}
     }
 }
+
+Function check-dbs
+{
+$i=0
+Write-Host "Checking Status of Databases..."
+Get-MailboxServer | Get-MailboxDatabaseCopyStatus | ForEach {
+
+    If ($_.Status -notmatch “Mounted” -and $_.Status -notmatch “Healthy” -or $_.ContentIndexState -notmatch “Healthy”)
+    {
+        Write-Host “`n$($_.Name) – Status: $($_.Status) – Index: $($_.ContentIndexState)” -ForegroundColor Red
+    }
+    Else { $i++ }
+    }
+    Write-Host "$i Databases OK"
+}
